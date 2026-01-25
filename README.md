@@ -1,5 +1,7 @@
 # Lara Content
 
+> **ALPHA VERSION**: This package is in early development. The API may change without notice. Not recommended for production use yet.
+
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/aichadigital/lara-content.svg?style=flat-square)](https://packagist.org/packages/aichadigital/lara-content)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/aichadigital/lara-content/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/aichadigital/lara-content/actions?query=workflow%3ACI+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/aichadigital/lara-content.svg?style=flat-square)](https://packagist.org/packages/aichadigital/lara-content)
@@ -240,3 +242,191 @@ Please see [CHANGELOG](CHANGELOG.md) for recent changes.
 ## License
 
 AGPL-3.0-or-later. See [License File](LICENSE.md) for details.
+
+---
+
+# Lara Content (Español)
+
+> **VERSION ALPHA**: Este paquete está en desarrollo inicial. La API puede cambiar sin previo aviso. No recomendado para producción todavía.
+
+Paquete de gestión de contenido para Laravel con páginas, posts, bloques y menús. Soporta plantillas Blade con componentes Livewire opcionales para interactividad. Incluye soporte multilingüe via Spatie Translatable.
+
+
+## Características
+
+- **Páginas**: Sistema flexible de páginas con layouts personalizables y zonas de bloques
+- **Posts**: Posts de blog/noticias con atribución de autor y flujo de publicación
+- **Menús**: Sistema jerárquico de menús con elementos anidados
+- **Bloques**: Bloques de contenido modulares (HTML, Posts Recientes, Menú, Formulario de Contacto)
+- **Layouts**: Layouts predefinidos (Una Columna, Sidebar Izquierda/Derecha, Dos/Tres Columnas)
+- **Multilingüe**: Soporte completo de traducciones via spatie/laravel-translatable
+- **Extensible**: Registra layouts y bloques personalizados via registries
+- **Seguro**: Sanitización HTML con tags permitidos configurables
+
+
+## Requisitos
+
+- PHP 8.3+
+- Laravel 12+
+- Livewire 3+ (opcional, para bloques interactivos)
+
+
+## Instalación
+
+Instalar via composer:
+
+
+```bash
+composer require aichadigital/lara-content
+```
+
+
+Publicar y ejecutar migraciones:
+
+
+```bash
+php artisan vendor:publish --tag="lara-content-migrations"
+php artisan migrate
+```
+
+
+Publicar archivo de configuración:
+
+
+```bash
+php artisan vendor:publish --tag="lara-content-config"
+```
+
+
+Opcionalmente publicar vistas para personalización:
+
+
+```bash
+php artisan vendor:publish --tag="lara-content-views"
+```
+
+
+## Uso
+
+### Páginas
+
+
+```php
+use AichaDigital\LaraContent\Models\Page;
+
+// Crear una página
+$page = Page::create([
+    'title' => 'Sobre Nosotros',
+    'slug' => 'sobre-nosotros',
+    'layout' => 'sidebar-right',
+    'status' => 'published',
+]);
+
+// Añadir bloques a zonas
+$page->blocks()->create([
+    'zone' => 'main',
+    'block_type' => 'html',
+    'content' => ['html' => '<p>Bienvenido a nuestra empresa...</p>'],
+    'order' => 1,
+]);
+```
+
+
+### Posts
+
+
+```php
+use AichaDigital\LaraContent\Models\Post;
+
+$post = Post::create([
+    'title' => 'Primeros Pasos',
+    'slug' => 'primeros-pasos',
+    'content' => '# Introducción...',
+    'author_id' => auth()->id(),
+    'status' => 'published',
+    'published_at' => now(),
+]);
+```
+
+
+### Menús
+
+
+```php
+use AichaDigital\LaraContent\Models\Menu;
+
+$menu = Menu::create([
+    'name' => 'Navegación Principal',
+    'slug' => 'nav-principal',
+]);
+
+$menu->items()->create([
+    'title' => 'Inicio',
+    'url' => '/',
+    'order' => 1,
+]);
+```
+
+
+## Layouts Disponibles
+
+| Slug | Nombre | Zonas |
+|------|--------|-------|
+| `single` | Una Columna | main |
+| `sidebar-left` | Sidebar Izquierda | main, sidebar |
+| `sidebar-right` | Sidebar Derecha | main, sidebar |
+| `two-column` | Dos Columnas | left, right |
+| `three-column` | Tres Columnas | left, center, right |
+
+
+## Bloques Disponibles
+
+| Slug | Nombre | Interactivo | Descripción |
+|------|--------|-------------|-------------|
+| `html` | Bloque HTML | No | Contenido HTML |
+| `recent-posts` | Posts Recientes | No | Lista de posts recientes |
+| `menu` | Bloque Menú | No | Renderiza un menú |
+| `contact-form` | Formulario Contacto | Sí | Formulario Livewire |
+
+
+## Extensión
+
+### Layouts Personalizados
+
+
+```php
+use AichaDigital\LaraContent\Registries\LayoutRegistry;
+use App\Content\Layouts\MiLayout;
+
+public function boot(): void
+{
+    app(LayoutRegistry::class)->register(new MiLayout());
+}
+```
+
+
+### Bloques Personalizados
+
+
+```php
+use AichaDigital\LaraContent\Registries\BlockRegistry;
+use App\Content\Blocks\MiBloque;
+
+public function boot(): void
+{
+    app(BlockRegistry::class)->register(new MiBloque());
+}
+```
+
+
+## Tests
+
+
+```bash
+composer test
+```
+
+
+## Licencia
+
+AGPL-3.0-or-later. Ver [archivo de licencia](LICENSE.md) para detalles.
