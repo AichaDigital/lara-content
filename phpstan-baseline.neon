@@ -1,0 +1,145 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Called ''env'' outside of the config directory which returns null when the config is cached, use ''config''\.$#'
+			identifier: larastan.noEnvCallsOutsideOfConfig
+			count: 5
+			path: config/content.php
+
+		-
+			message: '#^Offset ''type'' on array\{type\: string, required\?\: bool, default\?\: mixed\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: src/Blocks/AbstractBlock.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>id" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: src/Blocks/BlockContext.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Blocks/ContactFormBlock.php
+
+		-
+			message: '#^Attribute class Livewire\\Attributes\\Validate does not exist\.$#'
+			identifier: attribute.notFound
+			count: 5
+			path: src/Livewire/ContactForm.php
+
+		-
+			message: '#^Call to an undefined method AichaDigital\\LaraContent\\Livewire\\ContactForm\:\:addError\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Livewire/ContactForm.php
+
+		-
+			message: '#^Call to an undefined method AichaDigital\\LaraContent\\Livewire\\ContactForm\:\:reset\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Livewire/ContactForm.php
+
+		-
+			message: '#^Call to an undefined method AichaDigital\\LaraContent\\Livewire\\ContactForm\:\:resetValidation\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Livewire/ContactForm.php
+
+		-
+			message: '#^Call to an undefined method AichaDigital\\LaraContent\\Livewire\\ContactForm\:\:validate\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Livewire/ContactForm.php
+
+		-
+			message: '#^Parameter \#1 \$view of function view expects view\-string\|null, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Livewire/ContactForm.php
+
+		-
+			message: '#^PHPDoc tag @property\-read for property AichaDigital\\LaraContent\\Models\\Menu\:\:\$items contains generic class Illuminate\\Database\\Eloquent\\Collection but does not specify its types\: TKey, TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Menu.php
+
+		-
+			message: '#^PHPDoc tag @property\-read for property AichaDigital\\LaraContent\\Models\\Menu\:\:\$rootItems contains generic class Illuminate\\Database\\Eloquent\\Collection but does not specify its types\: TKey, TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Menu.php
+
+		-
+			message: '#^Class AichaDigital\\LaraContent\\Models\\MenuItem has PHPDoc tag @property for property \$label with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/MenuItem.php
+
+		-
+			message: '#^PHPDoc tag @property\-read for property AichaDigital\\LaraContent\\Models\\MenuItem\:\:\$children contains generic class Illuminate\\Database\\Eloquent\\Collection but does not specify its types\: TKey, TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/MenuItem.php
+
+		-
+			message: '#^Class AichaDigital\\LaraContent\\Models\\Page has PHPDoc tag @property for property \$meta_description with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/Page.php
+
+		-
+			message: '#^Class AichaDigital\\LaraContent\\Models\\Page has PHPDoc tag @property for property \$title with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/Page.php
+
+		-
+			message: '#^PHPDoc tag @property\-read for property AichaDigital\\LaraContent\\Models\\Page\:\:\$blocks contains generic class Illuminate\\Database\\Eloquent\\Collection but does not specify its types\: TKey, TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Models/Page.php
+
+		-
+			message: '#^Class AichaDigital\\LaraContent\\Models\\PageBlock has PHPDoc tag @property for property \$config with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/PageBlock.php
+
+		-
+			message: '#^Class AichaDigital\\LaraContent\\Models\\Post has PHPDoc tag @property for property \$content with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/Post.php
+
+		-
+			message: '#^Class AichaDigital\\LaraContent\\Models\\Post has PHPDoc tag @property for property \$excerpt with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/Post.php
+
+		-
+			message: '#^Class AichaDigital\\LaraContent\\Models\\Post has PHPDoc tag @property for property \$title with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Models/Post.php
+
+		-
+			message: '#^Method AichaDigital\\LaraContent\\Models\\Post\:\:author\(\) should return Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<AichaDigital\\LaraContent\\Contracts\\ContentAuthorContract&Illuminate\\Database\\Eloquent\\Model, \$this\(AichaDigital\\LaraContent\\Models\\Post\)\> but returns Illuminate\\Database\\Eloquent\\Relations\\BelongsTo\<Illuminate\\Database\\Eloquent\\Model, \$this\(AichaDigital\\LaraContent\\Models\\Post\)\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Models/Post.php
+
+		-
+			message: '#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\Database\\Eloquent\\Model\:\:belongsTo\(\)$#'
+			identifier: argument.templateType
+			count: 1
+			path: src/Models/Post.php
+
+		-
+			message: '#^Class League\\CommonMark\\CommonMarkConverter constructor invoked with 2 parameters, 0\-1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: src/Services/ContentSanitizer.php

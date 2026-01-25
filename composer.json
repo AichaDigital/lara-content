@@ -1,47 +1,58 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "aichadigital/lara-content",
+    "description": "Content management package for Laravel with pages, posts, blocks and menus. Blade + Livewire, multilingual support.",
     "keywords": [
-        ":vendor_name",
+        "aichadigital",
         "laravel",
-        ":package_slug"
+        "content",
+        "cms",
+        "pages",
+        "posts",
+        "blocks",
+        "menus",
+        "livewire"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
-    "license": "MIT",
+    "homepage": "https://github.com/AichaDigital/lara-content",
+    "license": "AGPL-3.0-or-later",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Abdelkarim Mateos Sanchez",
+            "email": "abdelkarim.mateos@castris.com",
             "role": "Developer"
         }
     ],
     "require": {
-        "php": "^8.4",
+        "php": "^8.3",
+        "illuminate/contracts": "^12.0",
         "spatie/laravel-package-tools": "^1.16",
-        "illuminate/contracts": "^11.0||^12.0"
+        "spatie/laravel-translatable": "^6.8",
+        "stevebauman/purify": "^6.2",
+        "league/commonmark": "^2.5"
     },
     "require-dev": {
-        "laravel/pint": "^1.14",
-        "nunomaduro/collision": "^8.8",
         "larastan/larastan": "^3.0",
-        "orchestra/testbench": "^10.0.0||^9.0.0",
+        "laravel/pint": "^1.13",
+        "nunomaduro/collision": "^8.8",
+        "orchestra/testbench": "^10.0",
         "pestphp/pest": "^4.0",
         "pestphp/pest-plugin-arch": "^4.0",
         "pestphp/pest-plugin-laravel": "^4.0",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan-deprecation-rules": "^2.0",
-        "phpstan/phpstan-phpunit": "^2.0",
-        "spatie/laravel-ray": "^1.35"
+        "phpstan/phpstan-phpunit": "^2.0"
+    },
+    "suggest": {
+        "livewire/livewire": "Required for interactive blocks like ContactForm (^3.0)"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "AichaDigital\\LaraContent\\": "src/",
+            "AichaDigital\\LaraContent\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "AichaDigital\\LaraContent\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -49,9 +60,15 @@
         "post-autoload-dump": "@composer run prepare",
         "prepare": "@php vendor/bin/testbench package:discover --ansi",
         "analyse": "vendor/bin/phpstan analyse",
+        "pint": "vendor/bin/pint",
         "test": "vendor/bin/pest",
         "test-coverage": "vendor/bin/pest --coverage",
-        "format": "vendor/bin/pint"
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit=1G",
+        "quality": [
+            "@pint",
+            "@phpstan",
+            "@test"
+        ]
     },
     "config": {
         "sort-packages": true,
@@ -63,11 +80,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
-            ],
-            "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
-            }
+                "AichaDigital\\LaraContent\\ContentServiceProvider"
+            ]
         }
     },
     "minimum-stability": "dev",
