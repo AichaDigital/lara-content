@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace AichaDigital\LaraContent\Models;
 
 use AichaDigital\LaraContent\Concerns\HasUuid;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -18,8 +20,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $position
  * @property array $config
  * @property int|null $cache_ttl
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read Page $page
  */
 class PageBlock extends Model
@@ -86,8 +88,8 @@ class PageBlock extends Model
     /**
      * Scope to filter by zone.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<PageBlock>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<PageBlock>
+     * @param  Builder<PageBlock>  $query
+     * @return Builder<PageBlock>
      */
     public function scopeInZone($query, string $zone)
     {
@@ -97,8 +99,8 @@ class PageBlock extends Model
     /**
      * Scope to order by position.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<PageBlock>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<PageBlock>
+     * @param  Builder<PageBlock>  $query
+     * @return Builder<PageBlock>
      */
     public function scopeOrdered($query)
     {

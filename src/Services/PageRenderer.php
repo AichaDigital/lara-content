@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AichaDigital\LaraContent\Services;
 
+use AichaDigital\LaraContent\Layouts\Contracts\LayoutContract;
 use AichaDigital\LaraContent\Models\Page;
 use AichaDigital\LaraContent\Registries\LayoutRegistry;
 use Illuminate\Contracts\View\View;
@@ -91,7 +92,7 @@ class PageRenderer
     /**
      * Get the layout for a page.
      */
-    public function getLayout(Page $page): \AichaDigital\LaraContent\Layouts\Contracts\LayoutContract
+    public function getLayout(Page $page): LayoutContract
     {
         return $this->layoutRegistry->get($page->layout_slug);
     }

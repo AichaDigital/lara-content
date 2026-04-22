@@ -1,6 +1,11 @@
 <?php
 
 declare(strict_types=1);
+use AichaDigital\LaraContent\Models\Menu;
+use AichaDigital\LaraContent\Models\MenuItem;
+use AichaDigital\LaraContent\Models\Page;
+use AichaDigital\LaraContent\Models\PageBlock;
+use AichaDigital\LaraContent\Models\Post;
 
 return [
     /*
@@ -103,11 +108,11 @@ return [
     |
     */
     'models' => [
-        'page' => \AichaDigital\LaraContent\Models\Page::class,
-        'page_block' => \AichaDigital\LaraContent\Models\PageBlock::class,
-        'post' => \AichaDigital\LaraContent\Models\Post::class,
-        'menu' => \AichaDigital\LaraContent\Models\Menu::class,
-        'menu_item' => \AichaDigital\LaraContent\Models\MenuItem::class,
+        'page' => Page::class,
+        'page_block' => PageBlock::class,
+        'post' => Post::class,
+        'menu' => Menu::class,
+        'menu_item' => MenuItem::class,
     ],
 
     /*

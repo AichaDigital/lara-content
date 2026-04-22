@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace AichaDigital\LaraContent\Models;
 
 use AichaDigital\LaraContent\Concerns\HasUuid;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * Menu model for navigation menus.
@@ -14,8 +17,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $id
  * @property string $slug
  * @property string $name
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<MenuItem> $items
  * @property-read \Illuminate\Database\Eloquent\Collection<MenuItem> $rootItems
  */
@@ -53,8 +56,8 @@ class Menu extends Model
     /**
      * Scope to find by slug.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<Menu>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<Menu>
+     * @param  Builder<Menu>  $query
+     * @return Builder<Menu>
      */
     public function scopeBySlug($query, string $slug)
     {
@@ -72,7 +75,7 @@ class Menu extends Model
     /**
      * Build the menu tree structure.
      *
-     * @return \Illuminate\Support\Collection<int, MenuItem>
+     * @return Collection<int, MenuItem>
      */
     public function getTree()
     {

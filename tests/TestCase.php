@@ -7,6 +7,7 @@ namespace AichaDigital\LaraContent\Tests;
 use AichaDigital\LaraContent\ContentServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Stevebauman\Purify\PurifyServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -22,7 +23,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app): array
     {
         return [
-            \Stevebauman\Purify\PurifyServiceProvider::class,
+            PurifyServiceProvider::class,
             ContentServiceProvider::class,
         ];
     }

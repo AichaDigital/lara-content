@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AichaDigital\LaraContent\Services;
 
 use AichaDigital\LaraContent\Models\Menu;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -93,7 +94,7 @@ class MenuBuilder
     /**
      * Get all available menus.
      *
-     * @return \Illuminate\Database\Eloquent\Collection<int, Menu>
+     * @return Collection<int, Menu>
      */
     public function all()
     {

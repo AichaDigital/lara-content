@@ -20,6 +20,7 @@ use AichaDigital\LaraContent\Services\BlockRenderer;
 use AichaDigital\LaraContent\Services\ContentSanitizer;
 use AichaDigital\LaraContent\Services\MenuBuilder;
 use AichaDigital\LaraContent\Services\PageRenderer;
+use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -118,10 +119,10 @@ class ContentServiceProvider extends PackageServiceProvider
      */
     protected function registerLivewireComponents(): void
     {
-        if (! class_exists(\Livewire\Livewire::class)) {
+        if (! class_exists(Livewire::class)) {
             return;
         }
 
-        \Livewire\Livewire::component('content-contact-form', ContactForm::class);
+        Livewire::component('content-contact-form', ContactForm::class);
     }
 }
