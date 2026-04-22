@@ -9,6 +9,7 @@ use AichaDigital\LaraContent\Blocks\Contracts\BlockContract;
 use AichaDigital\LaraContent\Models\Page;
 use AichaDigital\LaraContent\Models\PageBlock;
 use AichaDigital\LaraContent\Registries\BlockRegistry;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Cache;
 
 /**
@@ -79,7 +80,7 @@ class BlockRenderer
     {
         $result = $block->render($context);
 
-        if ($result instanceof \Illuminate\Contracts\View\View) {
+        if ($result instanceof View) {
             return $result->render();
         }
 

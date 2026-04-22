@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace AichaDigital\LaraContent\Blocks;
 
 use Illuminate\Contracts\View\View;
+use Livewire\Livewire;
 
 /**
  * Contact form block (interactive).
@@ -73,7 +74,7 @@ class ContactFormBlock extends AbstractBlock
     public function render(BlockContext $context): View|string
     {
         // Check if Livewire is available
-        if (! class_exists(\Livewire\Livewire::class)) {
+        if (! class_exists(Livewire::class)) {
             return view('content::blocks.contact-form-fallback', [
                 'context' => $context,
                 'block' => $this,

@@ -8,6 +8,8 @@ use AichaDigital\LaraContent\Concerns\HasTranslatableContent;
 use AichaDigital\LaraContent\Concerns\HasUuid;
 use AichaDigital\LaraContent\Contracts\ContentAuthorContract;
 use AichaDigital\LaraContent\Enums\ContentType;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -24,10 +26,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int|string|null $author_id
  * @property ContentType $content_type
  * @property bool $is_published
- * @property \Carbon\Carbon|null $published_at
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
- * @property \Carbon\Carbon|null $deleted_at
+ * @property Carbon|null $published_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon|null $deleted_at
  * @property-read ContentAuthorContract|null $author
  */
 class Post extends Model
@@ -88,8 +90,8 @@ class Post extends Model
     /**
      * Scope to only published posts.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<Post>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<Post>
+     * @param  Builder<Post>  $query
+     * @return Builder<Post>
      */
     public function scopePublished($query)
     {
@@ -103,8 +105,8 @@ class Post extends Model
     /**
      * Scope to order by most recent.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<Post>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<Post>
+     * @param  Builder<Post>  $query
+     * @return Builder<Post>
      */
     public function scopeRecent($query)
     {
@@ -114,8 +116,8 @@ class Post extends Model
     /**
      * Scope to find by slug.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<Post>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<Post>
+     * @param  Builder<Post>  $query
+     * @return Builder<Post>
      */
     public function scopeBySlug($query, string $slug)
     {

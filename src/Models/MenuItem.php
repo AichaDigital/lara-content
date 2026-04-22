@@ -7,6 +7,9 @@ namespace AichaDigital\LaraContent\Models;
 use AichaDigital\LaraContent\Concerns\HasTranslatableContent;
 use AichaDigital\LaraContent\Concerns\HasUuid;
 use AichaDigital\LaraContent\Enums\MenuItemType;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,11 +25,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $reference
  * @property int $position
  * @property bool $is_active
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read Menu $menu
  * @property-read MenuItem|null $parent
- * @property-read \Illuminate\Database\Eloquent\Collection<MenuItem> $children
+ * @property-read Collection<MenuItem> $children
  */
 class MenuItem extends Model
 {
@@ -158,8 +161,8 @@ class MenuItem extends Model
     /**
      * Scope to filter active items.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<MenuItem>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<MenuItem>
+     * @param  Builder<MenuItem>  $query
+     * @return Builder<MenuItem>
      */
     public function scopeActive($query)
     {
@@ -169,8 +172,8 @@ class MenuItem extends Model
     /**
      * Scope to get root items only.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<MenuItem>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<MenuItem>
+     * @param  Builder<MenuItem>  $query
+     * @return Builder<MenuItem>
      */
     public function scopeRoot($query)
     {
@@ -180,8 +183,8 @@ class MenuItem extends Model
     /**
      * Scope to order by position.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder<MenuItem>  $query
-     * @return \Illuminate\Database\Eloquent\Builder<MenuItem>
+     * @param  Builder<MenuItem>  $query
+     * @return Builder<MenuItem>
      */
     public function scopeOrdered($query)
     {
