@@ -117,3 +117,52 @@ jobs:
           name: codecov-umbrella
           fail_ci_if_error: false
         continue-on-error: true
+
+  mysql-integration:
+    runs-on: ubuntu-latest
+    name: MySQL Integration (UUID-first contract)
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: lara_content_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      LARACONTENT_TEST_MYSQL_HOST: 127.0.0.1
+      LARACONTENT_TEST_MYSQL_PORT: 3306
+      LARACONTENT_TEST_MYSQL_DATABASE: lara_content_test
+      LARACONTENT_TEST_MYSQL_USERNAME: root
+      LARACONTENT_TEST_MYSQL_PASSWORD: root
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, mysql, pdo_mysql
+          coverage: none
+
+      - name: Install dependencies
+        run: composer update --prefer-stable --prefer-dist --no-interaction
+
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            mysqladmin ping -h 127.0.0.1 -uroot -proot --silent && break
+            sleep 1
+          done
+
+      - name: Run MySQL Integration tests
+        run: vendor/bin/pest tests/Integration/Mysql --ci

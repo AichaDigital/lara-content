@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property array|null $excerpt
  * @property array|null $content
  * @property string|null $featured_image
- * @property int|string|null $author_id
+ * @property string|null $author_id
  * @property ContentType $content_type
  * @property bool $is_published
  * @property Carbon|null $published_at

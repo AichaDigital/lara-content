@@ -26,6 +26,7 @@ Content management package for Laravel with pages, posts, blocks and menus. Supp
 - PHP 8.3+
 - Laravel 12+
 - Livewire 3+ (optional, for interactive blocks)
+- **`users.id` UUID v7 char(36)** — `lara-content` is UUID-first (see [ADR-001](docs/ADR-001-uuid-first.md)). The consumer app's `users` table must use UUID v7 as primary key. Setup guide shared with the AichaDigital umbrella: [aichadigital/larabill `setup-uuid.md`](https://github.com/AichaDigital/larabill/blob/main/docs/setup-uuid.md).
 
 
 ## Installation
@@ -70,10 +71,7 @@ Key configuration options in `config/content.php`:
 
 ```php
 return [
-    // User ID type: 'auto', 'int', 'uuid', 'ulid'
-    'user_id_type' => env('CONTENT_USER_ID_TYPE', 'auto'),
-
-    // Author model for posts
+    // Author model for posts (must have UUID v7 char(36) primary key)
     'author_model' => env('CONTENT_AUTHOR_MODEL', 'App\\Models\\User'),
 
     // Cache settings
@@ -269,6 +267,7 @@ Paquete de gestión de contenido para Laravel con páginas, posts, bloques y men
 - PHP 8.3+
 - Laravel 12+
 - Livewire 3+ (opcional, para bloques interactivos)
+- **`users.id` UUID v7 char(36)** — `lara-content` es UUID-first (ver [ADR-001](docs/ADR-001-uuid-first.md)). La tabla `users` de la app consumidora debe usar UUID v7 como clave primaria. Guía de setup compartida con el paraguas AichaDigital: [aichadigital/larabill `setup-uuid.md`](https://github.com/AichaDigital/larabill/blob/main/docs/setup-uuid.md).
 
 
 ## Instalación
