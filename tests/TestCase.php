@@ -38,8 +38,6 @@ class TestCase extends Orchestra
             'prefix' => '',
         ]);
 
-        config()->set('content.user_id_type', 'uuid');
-
         // Run migrations
         $this->runMigrations();
     }

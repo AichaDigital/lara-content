@@ -10,24 +10,6 @@ use AichaDigital\LaraContent\Models\Post;
 return [
     /*
     |--------------------------------------------------------------------------
-    | User ID Type Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Defines the type of primary key used in the users table.
-    | This affects how foreign keys (like author_id) are created.
-    |
-    | Supported: 'auto', 'int', 'uuid', 'ulid'
-    |
-    | 'auto' - Automatically detect from the users table
-    | 'int'  - unsignedBigInteger (Laravel default)
-    | 'uuid' - char(36) UUID v7 (recommended)
-    | 'ulid' - char(26) ULID
-    |
-    */
-    'user_id_type' => env('CONTENT_USER_ID_TYPE', 'auto'),
-
-    /*
-    |--------------------------------------------------------------------------
     | Author Model
     |--------------------------------------------------------------------------
     |
