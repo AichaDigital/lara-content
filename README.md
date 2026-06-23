@@ -2,9 +2,15 @@
 
 > **ALPHA VERSION**: This package is in early development. The API may change without notice. Not recommended for production use yet.
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/aichadigital/lara-content.svg?style=flat-square)](https://packagist.org/packages/aichadigital/lara-content)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/aichadigital/lara-content/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/aichadigital/lara-content/actions?query=workflow%3ACI+branch%3Amain)
+<!-- AI-BADGES:START profile=essential -->
+[![Latest Version](https://img.shields.io/packagist/v/aichadigital/lara-content.svg?style=flat-square)](https://packagist.org/packages/aichadigital/lara-content)
 [![Total Downloads](https://img.shields.io/packagist/dt/aichadigital/lara-content.svg?style=flat-square)](https://packagist.org/packages/aichadigital/lara-content)
+[![Tests](https://img.shields.io/github/actions/workflow/status/AichaDigital/lara-content/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/AichaDigital/lara-content/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![PHPStan level 6](https://img.shields.io/badge/PHPStan-level%206-green.svg?style=flat-square&logo=php)](https://phpstan.org/)
+[![PHP Version](https://img.shields.io/packagist/php-v/aichadigital/lara-content.svg?style=flat-square&logo=php)](https://packagist.org/packages/aichadigital/lara-content)
+[![Laravel Version](https://img.shields.io/badge/Laravel-12.x%20%7C%2013.x-red.svg?style=flat-square&logo=laravel)](https://laravel.com)
+[![License](https://img.shields.io/packagist/l/aichadigital/lara-content.svg?style=flat-square)](https://packagist.org/packages/aichadigital/lara-content)
+<!-- AI-BADGES:END -->
 
 Content management package for Laravel with pages, posts, blocks and menus. Supports Blade templates with optional Livewire components for interactivity. Includes multilingual support via Spatie Translatable.
 
