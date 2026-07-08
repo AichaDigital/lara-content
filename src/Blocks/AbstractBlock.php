@@ -78,7 +78,7 @@ abstract class AbstractBlock implements BlockContract
                 $errors[$key] = "The {$key} field is required.";
             }
 
-            if (isset($config[$key]) && isset($rules['type'])) {
+            if (isset($config[$key], $rules['type'])) {
                 if (! $this->validateType($config[$key], $rules['type'])) {
                     $errors[$key] = "The {$key} field must be of type {$rules['type']}.";
                 }

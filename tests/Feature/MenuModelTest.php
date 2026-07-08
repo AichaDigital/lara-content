@@ -5,6 +5,7 @@ declare(strict_types=1);
 use AichaDigital\LaraContent\Enums\MenuItemType;
 use AichaDigital\LaraContent\Models\Menu;
 use AichaDigital\LaraContent\Models\MenuItem;
+use Illuminate\Support\Facades\DB;
 
 test('can create a menu', function () {
     $menu = Menu::create([
@@ -116,4 +117,72 @@ test('menu item can have children', function () {
 
     expect($parent->children)->toHaveCount(1)
         ->and($child->parent->id)->toBe($parent->id);
+});
+
+test('has children reflects the eager-loaded recursive relation without extra queries', function () {
+    $menu = Menu::create(['slug' => 'deep', 'name' => 'Deep Menu']);
+
+    // Build a 3-level branch: root -> child -> grandchild.
+    $root = MenuItem::create([
+        'menu_id' => $menu->id,
+        'label' => ['en' => 'Root'],
+        'type' => MenuItemType::URL,
+        'reference' => '/root',
+        'position' => 0,
+    ]);
+    $child = MenuItem::create([
+        'menu_id' => $menu->id,
+        'parent_id' => $root->id,
+        'label' => ['en' => 'Child'],
+        'type' => MenuItemType::URL,
+        'reference' => '/child',
+        'position' => 0,
+    ]);
+    MenuItem::create([
+        'menu_id' => $menu->id,
+        'parent_id' => $child->id,
+        'label' => ['en' => 'Grandchild'],
+        'type' => MenuItemType::URL,
+        'reference' => '/grandchild',
+        'position' => 0,
+    ]);
+
+    $tree = $menu->getTree();
+
+    DB::connection()->enableQueryLog();
+
+    $rootItem = $tree->firstWhere('reference', '/root');
+    $childItem = $rootItem->childrenRecursive->first();
+    $grandchild = $childItem->childrenRecursive->first();
+
+    expect($rootItem->hasChildren())->toBeTrue()
+        ->and($childItem->hasChildren())->toBeTrue()
+        ->and($grandchild->hasChildren())->toBeFalse()
+        // The whole subtree was eager-loaded: walking it triggers no query.
+        ->and(DB::connection()->getQueryLog())->toBeEmpty();
+
+    DB::connection()->disableQueryLog();
+});
+
+test('is active matches the current request url', function () {
+    $menu = Menu::create(['slug' => 'active', 'name' => 'Active Menu']);
+
+    $item = MenuItem::create([
+        'menu_id' => $menu->id,
+        'label' => ['en' => 'External'],
+        'type' => MenuItemType::URL,
+        'reference' => request()->url(),
+        'position' => 0,
+    ]);
+
+    $other = MenuItem::create([
+        'menu_id' => $menu->id,
+        'label' => ['en' => 'Elsewhere'],
+        'type' => MenuItemType::URL,
+        'reference' => 'https://example.test/elsewhere',
+        'position' => 1,
+    ]);
+
+    expect($item->isActive())->toBeTrue()
+        ->and($other->isActive())->toBeFalse();
 });

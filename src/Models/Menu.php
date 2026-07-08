@@ -80,7 +80,7 @@ class Menu extends Model
     public function getTree()
     {
         return $this->rootItems()
-            ->with('children')
+            ->with('childrenRecursive')
             ->where('is_active', true)
             ->get();
     }
