@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property-read Menu $menu
  * @property-read MenuItem|null $parent
  * @property-read Collection<MenuItem> $children
+ * @property-read Collection<int, MenuItem> $childrenRecursive
  */
 class MenuItem extends Model
 {
@@ -102,11 +103,38 @@ class MenuItem extends Model
     }
 
     /**
-     * Check if this item has children.
+     * Get the whole active child subtree in a single eager-loadable relation.
+     *
+     * Eager-load this on the tree root to render a menu of arbitrary depth
+     * without triggering a query per level.
+     *
+     * @return HasMany<MenuItem, $this>
+     */
+    public function childrenRecursive(): HasMany
+    {
+        return $this->children()->with('childrenRecursive');
+    }
+
+    /**
+     * Check if this item has active children.
+     *
+     * Prefers the eager-loaded subtree to stay N+1-safe when rendering a tree.
      */
     public function hasChildren(): bool
     {
+        if ($this->relationLoaded('childrenRecursive')) {
+            return $this->childrenRecursive->isNotEmpty();
+        }
+
         return $this->children()->exists();
+    }
+
+    /**
+     * Check if this item points to the current request URL.
+     */
+    public function isActive(): bool
+    {
+        return request()->url() === $this->getUrl();
     }
 
     /**

@@ -10,6 +10,7 @@ use AichaDigital\LaraContent\Contracts\ContentAuthorContract;
 use AichaDigital\LaraContent\Enums\ContentType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -31,6 +32,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $updated_at
  * @property Carbon|null $deleted_at
  * @property-read ContentAuthorContract|null $author
+ * @property-read int $reading_time
  */
 class Post extends Model
 {
@@ -142,13 +144,19 @@ class Post extends Model
 
     /**
      * Get the reading time estimate in minutes.
+     *
+     * @return Attribute<int, never>
      */
-    public function getReadingTimeAttribute(): int
+    protected function readingTime(): Attribute
     {
-        $content = $this->getTranslatedContent('content') ?? '';
-        $wordCount = str_word_count(strip_tags($content));
-        $wordsPerMinute = 200;
+        return Attribute::make(
+            get: function (): int {
+                $content = $this->getTranslatedContent('content') ?? '';
+                $wordCount = str_word_count(strip_tags($content));
+                $wordsPerMinute = 200;
 
-        return max(1, (int) ceil($wordCount / $wordsPerMinute));
+                return max(1, (int) ceil($wordCount / $wordsPerMinute));
+            },
+        );
     }
 }
