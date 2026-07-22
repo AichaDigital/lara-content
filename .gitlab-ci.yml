@@ -124,7 +124,12 @@ pest:
     # GitHub corría la suite dos veces (--ci y luego --coverage). Una sola pasada
     # con ambos flags da el mismo resultado por la mitad de tiempo de runner.
     - ./vendor/bin/pest --ci --coverage --coverage-clover=coverage.xml
-  coverage: '/^\s*Total:\s*(\d+\.\d+)\s*%/'
+  # Sin ancla `^`: Pest invocado directamente emite la línea como
+  # "<ESC>[1mTotal: 35.0 %<ESC>[22m", así que un `^\s*Total:` NO casa y GitLab
+  # registra cobertura vacía — sin error, con el job en verde y el badge en
+  # "unknown". Las apps ya migradas (status, swissknife) usan `php artisan test
+  # --coverage`, que no emite ese escape, y por eso allí sí funcionaba.
+  coverage: '/Total:\s*(\d+\.\d+)\s*%/'
   artifacts:
     when: always
     paths:

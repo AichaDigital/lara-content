@@ -5,13 +5,18 @@
 <!-- AI-BADGES:START profile=essential -->
 [![Latest Version](https://img.shields.io/packagist/v/aichadigital/lara-content.svg?style=flat-square)](https://packagist.org/packages/aichadigital/lara-content)
 [![Total Downloads](https://img.shields.io/packagist/dt/aichadigital/lara-content.svg?style=flat-square)](https://packagist.org/packages/aichadigital/lara-content)
-[![Tests](https://img.shields.io/github/actions/workflow/status/AichaDigital/lara-content/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/AichaDigital/lara-content/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![Code Coverage](https://img.shields.io/codecov/c/github/AichaDigital/lara-content?style=flat-square&logo=codecov)](https://codecov.io/gh/AichaDigital/lara-content)
+[![Pipeline](https://gitlab.castris.com/aichadigital/lara-content/badges/main/pipeline.svg?style=flat-square)](https://gitlab.castris.com/aichadigital/lara-content/-/pipelines)
+[![Coverage](https://gitlab.castris.com/aichadigital/lara-content/badges/main/coverage.svg?style=flat-square)](https://gitlab.castris.com/aichadigital/lara-content/-/pipelines)
 [![PHPStan level 6](https://img.shields.io/badge/PHPStan-level%206-green.svg?style=flat-square&logo=php)](https://phpstan.org/)
 [![PHP Version](https://img.shields.io/packagist/php-v/aichadigital/lara-content.svg?style=flat-square&logo=php)](https://packagist.org/packages/aichadigital/lara-content)
 [![Laravel Version](https://img.shields.io/badge/Laravel-12.x%20%7C%2013.x-red.svg?style=flat-square&logo=laravel)](https://laravel.com)
 [![License](https://img.shields.io/packagist/l/aichadigital/lara-content.svg?style=flat-square)](https://packagist.org/packages/aichadigital/lara-content)
 <!-- AI-BADGES:END -->
+
+> Development happens on
+> [gitlab.castris.com](https://gitlab.castris.com/aichadigital/lara-content).
+> The GitHub repository is a read-only distribution mirror: issues and pull
+> requests opened there are not seen.
 
 Content management package for Laravel with pages, posts, blocks and menus. Supports Blade templates with optional Livewire components for interactivity. Includes multilingual support via Spatie Translatable.
 
