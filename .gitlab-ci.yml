@@ -1,0 +1,183 @@
+# CI de aichadigital/lara-content en GitLab self-hosted (ADE-295 — Fase 3).
+# Traducción de .github/workflows/tests.yml.
+# Runner: aichadigital-runner01 (VM 891 en prohe03), tags [aichadigital, docker].
+# El runner es opt-in (run_untagged=false): sin estos tags no se ejecuta nada.
+#
+# Paquete, no app: no hay composer.lock versionado → `composer update` (como en
+# GitHub) y `composer validate --strict` en vez de `--check-lock`. La caché es la
+# de descarga de Composer, nunca vendor/, y su clave cuelga de la combinación de
+# matriz porque cada una resuelve un árbol de dependencias distinto.
+#
+# NO traducido a propósito: el `paths-ignore: docs/**` de GitHub. Es una
+# optimización de coste, no un gate de calidad; correr la matriz completa en un
+# commit de documentación cuesta minutos de runner propio, no correctitud. Se deja
+# anotado en vez de replicarlo a medias.
+#
+# PENDIENTE de decisión (ver ADE-295): `update-changelog.yml` no se traduce aquí.
+# Se disparaba en `release` de GitHub y commiteaba el CHANGELOG de vuelta a main.
+# Con Actions apagado en el mirror y los releases naciendo en GitLab, esa
+# automatización deja de existir — no se sustituye en silencio.
+
+stages:
+  - quality
+  - test
+
+default:
+  tags:
+    - aichadigital
+    - docker
+  interruptible: true
+
+variables:
+  COMPOSER_CACHE_DIR: "$CI_PROJECT_DIR/.composer-cache"
+  COMPOSER_ALLOW_SUPERUSER: "1"
+  # Composer mata sus procesos hijo a los 300 s. Aquí la matriz resuelve cuatro
+  # árboles distintos y la suite es mayor que la del piloto: el límite estaba
+  # latente, no ausente. Sin esto un job muere a mitad con todos los tests verdes.
+  COMPOSER_PROCESS_TIMEOUT: "0"
+  GIT_DEPTH: "20"
+
+# Equivalente a: on.push[main] + on.pull_request[main]
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+.php:
+  before_script:
+    - composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+  cache:
+    key: "composer-php${PHP_VERSION}-l${LARAVEL}"
+    paths:
+      - .composer-cache/
+
+# --- Stage: quality -----------------------------------------------------------
+# Los tres jobs de calidad de GitHub fijaban php-version 8.3; se conserva.
+
+manifest:
+  stage: quality
+  image: aichadigital/laravel-ci:8.3
+  script:
+    - composer validate --strict --no-interaction
+
+pint:
+  stage: quality
+  image: aichadigital/laravel-ci:8.3
+  variables:
+    PHP_VERSION: "8.3"
+  extends: .php
+  script:
+    - ./vendor/bin/pint --test
+
+phpstan:
+  stage: quality
+  image: aichadigital/laravel-ci:8.3
+  variables:
+    PHP_VERSION: "8.3"
+  extends: .php
+  script:
+    # phpstan.neon.dist declara `tmpDir: build/phpstan`; sin el directorio el
+    # análisis falla por no poder escribir la caché.
+    - mkdir -p build/phpstan
+    - ./vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+
+# --- Stage: test --------------------------------------------------------------
+
+# Matriz PHP × Laravel. GitHub la expresaba con `include:` para emparejar cada
+# Laravel con su testbench; aquí van dos entradas, cada una con su par fijo y el
+# array de PHP — cuatro jobs, las mismas combinaciones.
+#
+# La cobertura iba a Codecov con `continue-on-error` (medía, no bloqueaba). Se
+# sustituye por la cobertura NATIVA de GitLab: una dependencia externa menos, que
+# es justamente el motivo de ADE-291. No había gate mínimo y no se inventa uno.
+#
+# PCOV viaja deshabilitado en la imagen compartida; este job opta por él. La
+# aserción del driver no es opcional: un informe de cobertura sin driver no falla,
+# mide cero y reporta éxito (ver README de aichadigital/ci-image).
+pest:
+  stage: test
+  image: aichadigital/laravel-ci:$PHP_VERSION
+  parallel:
+    matrix:
+      - PHP_VERSION: ["8.3", "8.4"]
+        LARAVEL: "12.*"
+        TESTBENCH: "10.*"
+      - PHP_VERSION: ["8.3", "8.4"]
+        LARAVEL: "13.*"
+        TESTBENCH: "11.*"
+  cache:
+    key: "composer-php${PHP_VERSION}-l${LARAVEL}"
+    paths:
+      - .composer-cache/
+  before_script:
+    - php -v | head -1
+    - composer require "laravel/framework:${LARAVEL}" "orchestra/testbench:${TESTBENCH}" --no-interaction --no-update
+    - composer update --prefer-stable --prefer-dist --no-interaction --no-progress
+    - composer show -D
+  script:
+    - echo 'pcov.enabled=1' > /usr/local/etc/php/conf.d/zz-pcov-on.ini
+    - |
+      if ! php -r 'exit(ini_get("pcov.enabled") ? 0 : 1);'; then
+        echo "PCOV no se activó — el informe de cobertura mediría cero y reportaría éxito"
+        exit 1
+      fi
+    # GitHub corría la suite dos veces (--ci y luego --coverage). Una sola pasada
+    # con ambos flags da el mismo resultado por la mitad de tiempo de runner.
+    - ./vendor/bin/pest --ci --coverage --coverage-clover=coverage.xml
+  coverage: '/^\s*Total:\s*(\d+\.\d+)\s*%/'
+  artifacts:
+    when: always
+    paths:
+      - coverage.xml
+    expire_in: 1 week
+
+# Contrato UUID-first sobre MySQL real (no SQLite). El caso de traducción con
+# trampa: en GitHub Actions los servicios se publican en 127.0.0.1 vía puertos,
+# mientras que en GitLab el servicio es un contenedor vecino alcanzable por su
+# ALIAS de red. Apuntar a 127.0.0.1 aquí no da error de conexión: el TestCase
+# hace markTestSkipped() cuando no ve entorno utilizable, así que el job saldría
+# VERDE sin ejecutar una sola aserción. De ahí la aserción explícita del final.
+mysql-integration:
+  stage: test
+  image: aichadigital/laravel-ci:8.3
+  services:
+    - name: mysql:9.7
+      alias: mysql
+  variables:
+    PHP_VERSION: "8.3"
+    LARAVEL: "stable"
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: lara_content_test
+    LARACONTENT_TEST_MYSQL_HOST: mysql
+    LARACONTENT_TEST_MYSQL_PORT: "3306"
+    LARACONTENT_TEST_MYSQL_DATABASE: lara_content_test
+    LARACONTENT_TEST_MYSQL_USERNAME: root
+    LARACONTENT_TEST_MYSQL_PASSWORD: root
+  extends: .php
+  script:
+    # Espera activa con PDO (la imagen trae pdo_mysql). No se usa mysqladmin
+    # porque la imagen lleva cliente MariaDB, cuyos binarios no garantizan ese
+    # nombre.
+    - |
+      for i in $(seq 1 60); do
+        php -r 'try { new PDO("mysql:host=".getenv("LARACONTENT_TEST_MYSQL_HOST").";port=".getenv("LARACONTENT_TEST_MYSQL_PORT"), getenv("LARACONTENT_TEST_MYSQL_USERNAME"), getenv("LARACONTENT_TEST_MYSQL_PASSWORD")); exit(0); } catch (Throwable $e) { exit(1); }' && break
+        sleep 2
+      done
+    - |
+      if ! php -r 'try { new PDO("mysql:host=".getenv("LARACONTENT_TEST_MYSQL_HOST").";port=".getenv("LARACONTENT_TEST_MYSQL_PORT"), getenv("LARACONTENT_TEST_MYSQL_USERNAME"), getenv("LARACONTENT_TEST_MYSQL_PASSWORD")); exit(0); } catch (Throwable $e) { exit(1); }'; then
+        echo "MySQL no respondió en 120 s"
+        exit 1
+      fi
+    - |
+      set -o pipefail
+      ./vendor/bin/pest tests/Integration/Mysql --ci 2>&1 | tee /tmp/mysql-pest.log
+    - |
+      if grep -qiE '[0-9]+ skipped' /tmp/mysql-pest.log; then
+        echo "Los tests de integración MySQL se SALTARON: el TestCase no vio entorno utilizable."
+        echo "Un job verde aquí no probaría nada — revisar las variables LARACONTENT_TEST_MYSQL_*."
+        exit 1
+      fi
+      if ! grep -qE 'Tests:.*[0-9]+ passed' /tmp/mysql-pest.log; then
+        echo "No se registró ningún test pasado en la suite de integración MySQL."
+        exit 1
+      fi
