@@ -146,7 +146,7 @@ mysql-integration:
   stage: test
   image: aichadigital/laravel-ci:8.3
   services:
-    - name: mysql:9.7
+    - name: mysql:26.7
       alias: mysql
   variables:
     PHP_VERSION: "8.3"
