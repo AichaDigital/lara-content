@@ -28,7 +28,7 @@
         "spatie/laravel-translatable": "^6.13",
         "stevebauman/purify": "^6.2",
         "league/commonmark": "^2.5",
-        "symfony/yaml": "^6.4||^7.0"
+        "symfony/yaml": "^6.4||^7.0||^8.0"
     },
     "require-dev": {
         "larastan/larastan": "^3.0",

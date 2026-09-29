@@ -2,6 +2,16 @@
 
 All notable changes to `aichadigital/lara-content` will be documented in this file.
 
+## [0.4.0] - unreleased
+
+### Added
+
+- Support for Symfony 8 consumers: the `symfony/yaml` constraint widens to
+  `^6.4||^7.0||^8.0` (AID-1505). Laravel 13 consumers (the reference consumer
+  ArabeConAicha) resolve `symfony/yaml` 8.x and were previously unable to
+  install the package at all. Additive change — no behavior change on
+  Symfony 6/7 consumers.
+
 ## [0.3.0] - 2026-09-29
 
 ### Breaking changes — editorial workflow replaces is_published
