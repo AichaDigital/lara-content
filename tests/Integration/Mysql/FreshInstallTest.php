@@ -35,7 +35,7 @@ describe('lara-content fresh install on MySQL — UUID-first contract (ADR-001)'
             'title' => json_encode(['en' => 'Fresh install smoke']),
             'author_id' => $userId,
             'content_type' => 1,
-            'is_published' => false,
+            'publish_status' => 'draft',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

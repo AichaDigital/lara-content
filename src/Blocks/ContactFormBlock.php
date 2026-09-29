@@ -75,13 +75,19 @@ class ContactFormBlock extends AbstractBlock
     {
         // Check if Livewire is available
         if (! class_exists(Livewire::class)) {
-            return view('content::blocks.contact-form-fallback', [
+            /** @var view-string $fallbackView */
+            $fallbackView = 'content::blocks.contact-form-fallback';
+
+            return view($fallbackView, [
                 'context' => $context,
                 'block' => $this,
             ]);
         }
 
-        return view($this->getViewName(), [
+        /** @var view-string $viewName */
+        $viewName = $this->getViewName();
+
+        return view($viewName, [
             'context' => $context,
             'config' => $context->config,
             'block' => $this,

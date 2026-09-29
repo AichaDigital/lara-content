@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use AichaDigital\LaraContent\Enums\ContentType;
+use AichaDigital\LaraContent\Enums\PublishStatus;
 use AichaDigital\LaraContent\Models\Post;
 
 test('reading time estimates minutes from the translated content word count', function () {
@@ -11,7 +12,7 @@ test('reading time estimates minutes from the translated content word count', fu
         'title' => ['en' => 'Reading time'],
         'content' => ['en' => '<p>'.str_repeat('word ', 400).'</p>'],
         'content_type' => ContentType::HTML,
-        'is_published' => true,
+        'publish_status' => PublishStatus::PUBLISHED,
     ]);
 
     // 400 words at 200 wpm => 2 minutes, HTML tags stripped before counting.
@@ -24,7 +25,7 @@ test('reading time is at least one minute for empty content', function () {
         'title' => ['en' => 'Empty'],
         'content' => ['en' => ''],
         'content_type' => ContentType::HTML,
-        'is_published' => true,
+        'publish_status' => PublishStatus::PUBLISHED,
     ]);
 
     expect($post->reading_time)->toBe(1);

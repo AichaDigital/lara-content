@@ -37,6 +37,23 @@ This is a **paragraph**.';
         ->and($result)->toContain('<strong>');
 });
 
+test('converts GFM tables to html (the GFM extension must be active)', function () {
+    // Regression guard: CommonMarkConverter silently discards a custom
+    // environment passed as its second constructor argument, which used to
+    // deactivate the GFM extension (tables) in this sanitizer.
+    $markdown = <<<'MD'
+        | A | B |
+        | --- | --- |
+        | 1 | 2 |
+        MD;
+
+    $result = $this->sanitizer->sanitizeMarkdown($markdown);
+
+    expect($result)->toContain('<table>')
+        ->and($result)->toContain('<th>A</th>')
+        ->and($result)->toContain('<td>1</td>');
+});
+
 test('sanitize method handles content type', function () {
     $html = '<p>Test</p>';
     $markdown = '**Bold**';

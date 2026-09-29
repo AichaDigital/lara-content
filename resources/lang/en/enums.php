@@ -13,4 +13,11 @@ return [
         'markdown' => 'Markdown',
         'html' => 'HTML',
     ],
+    'publish_status' => [
+        'draft' => 'Draft',
+        'review' => 'In review',
+        'ready' => 'Ready to publish',
+        'published' => 'Published',
+        'archived' => 'Archived',
+    ],
 ];

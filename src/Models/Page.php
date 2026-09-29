@@ -7,6 +7,7 @@ namespace AichaDigital\LaraContent\Models;
 use AichaDigital\LaraContent\Concerns\HasTranslatableContent;
 use AichaDigital\LaraContent\Concerns\HasUuid;
 use AichaDigital\LaraContent\Enums\ContentType;
+use AichaDigital\LaraContent\Enums\PublishStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -23,7 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property array|null $meta_description
  * @property string $layout_slug
  * @property ContentType $content_type
- * @property bool $is_published
+ * @property PublishStatus $publish_status
  * @property Carbon|null $published_at
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -38,13 +39,17 @@ class Page extends Model
 
     protected $table = 'content_pages';
 
+    protected $attributes = [
+        'publish_status' => 'draft',
+    ];
+
     protected $fillable = [
         'slug',
         'title',
         'meta_description',
         'layout_slug',
         'content_type',
-        'is_published',
+        'publish_status',
         'published_at',
     ];
 
@@ -65,7 +70,7 @@ class Page extends Model
     {
         return [
             'content_type' => ContentType::class,
-            'is_published' => 'boolean',
+            'publish_status' => PublishStatus::class,
             'published_at' => 'datetime',
         ];
     }
@@ -98,7 +103,7 @@ class Page extends Model
      */
     public function scopePublished($query)
     {
-        return $query->where('is_published', true)
+        return $query->where('publish_status', PublishStatus::PUBLISHED->value)
             ->where(function ($q) {
                 $q->whereNull('published_at')
                     ->orWhere('published_at', '<=', now());

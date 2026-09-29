@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use AichaDigital\LaraContent\Enums\ContentType;
+use AichaDigital\LaraContent\Enums\PublishStatus;
 use AichaDigital\LaraContent\Models\Page;
 
 test('can create a page', function () {
@@ -11,7 +12,7 @@ test('can create a page', function () {
         'title' => ['en' => 'Test Page', 'es' => 'Pagina de prueba'],
         'layout_slug' => 'single',
         'content_type' => ContentType::HTML,
-        'is_published' => true,
+        'publish_status' => PublishStatus::PUBLISHED,
     ]);
 
     expect($page)->toBeInstanceOf(Page::class)
@@ -49,14 +50,14 @@ test('published scope filters correctly', function () {
         'slug' => 'published',
         'title' => ['en' => 'Published'],
         'layout_slug' => 'single',
-        'is_published' => true,
+        'publish_status' => PublishStatus::PUBLISHED,
     ]);
 
     Page::create([
         'slug' => 'draft',
         'title' => ['en' => 'Draft'],
         'layout_slug' => 'single',
-        'is_published' => false,
+        'publish_status' => PublishStatus::DRAFT,
     ]);
 
     $published = Page::published()->get();

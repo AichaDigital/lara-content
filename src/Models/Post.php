@@ -8,11 +8,14 @@ use AichaDigital\LaraContent\Concerns\HasTranslatableContent;
 use AichaDigital\LaraContent\Concerns\HasUuid;
 use AichaDigital\LaraContent\Contracts\ContentAuthorContract;
 use AichaDigital\LaraContent\Enums\ContentType;
+use AichaDigital\LaraContent\Enums\PublishStatus;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -23,15 +26,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property array $title
  * @property array|null $excerpt
  * @property array|null $content
+ * @property array<string, string>|null $meta_title
+ * @property array<string, string>|null $meta_description
  * @property string|null $featured_image
+ * @property array<string, string>|null $featured_image_alt
+ * @property string|null $focus_keyword
+ * @property array<int, string>|null $secondary_keywords
+ * @property array<int, string>|null $internal_notes
  * @property string|null $author_id
  * @property ContentType $content_type
- * @property bool $is_published
+ * @property PublishStatus $publish_status
  * @property Carbon|null $published_at
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon|null $deleted_at
  * @property-read ContentAuthorContract|null $author
+ * @property-read Collection<int, Category> $categories
+ * @property-read Collection<int, Tag> $tags
  * @property-read int $reading_time
  */
 class Post extends Model
@@ -42,16 +53,39 @@ class Post extends Model
 
     protected $table = 'content_posts';
 
+    protected $attributes = [
+        'publish_status' => 'draft',
+    ];
+
     protected $fillable = [
         'slug',
         'title',
         'excerpt',
         'content',
+        'meta_title',
+        'meta_description',
         'featured_image',
+        'featured_image_alt',
+        'focus_keyword',
+        'secondary_keywords',
+        'internal_notes',
         'author_id',
         'content_type',
-        'is_published',
+        'publish_status',
         'published_at',
+    ];
+
+    /**
+     * Attributes that carry editorial-only data. They must never be rendered
+     * or exposed by any public API surface (corpus rule: notas_internas is
+     * never rendered).
+     *
+     * @var array<int, string>
+     */
+    public const INTERNAL_ATTRIBUTES = [
+        'focus_keyword',
+        'secondary_keywords',
+        'internal_notes',
     ];
 
     /**
@@ -63,6 +97,9 @@ class Post extends Model
         'title',
         'excerpt',
         'content',
+        'meta_title',
+        'meta_description',
+        'featured_image_alt',
     ];
 
     /**
@@ -72,9 +109,21 @@ class Post extends Model
     {
         return [
             'content_type' => ContentType::class,
-            'is_published' => 'boolean',
+            'publish_status' => PublishStatus::class,
+            'secondary_keywords' => 'array',
+            'internal_notes' => 'array',
             'published_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the attributes that are safe for public rendering/API exposure.
+     *
+     * @return array<int, string>
+     */
+    public function publicAttributes(): array
+    {
+        return array_values(array_diff($this->getFillable(), self::INTERNAL_ATTRIBUTES));
     }
 
     /**
@@ -97,11 +146,47 @@ class Post extends Model
      */
     public function scopePublished($query)
     {
-        return $query->where('is_published', true)
+        return $query->where('publish_status', PublishStatus::PUBLISHED->value)
             ->where(function ($q) {
                 $q->whereNull('published_at')
                     ->orWhere('published_at', '<=', now());
             });
+    }
+
+    /**
+     * Get the categories attached to this post.
+     *
+     * @return BelongsToMany<Category, $this>
+     */
+    public function categories(): BelongsToMany
+    {
+        /** @var class-string<Category> $categoryModel */
+        $categoryModel = config('content.models.category', Category::class);
+
+        return $this->belongsToMany(
+            $categoryModel,
+            'content_post_categories',
+            'post_id',
+            'category_id'
+        )->orderBy('slug');
+    }
+
+    /**
+     * Get the tags attached to this post.
+     *
+     * @return BelongsToMany<Tag, $this>
+     */
+    public function tags(): BelongsToMany
+    {
+        /** @var class-string<Tag> $tagModel */
+        $tagModel = config('content.models.tag', Tag::class);
+
+        return $this->belongsToMany(
+            $tagModel,
+            'content_post_tags',
+            'post_id',
+            'tag_id'
+        )->orderBy('slug');
     }
 
     /**

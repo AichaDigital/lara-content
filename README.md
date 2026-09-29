@@ -25,6 +25,10 @@ Content management package for Laravel with pages, posts, blocks and menus. Supp
 
 - **Pages**: Flexible page system with customizable layouts and block zones
 - **Posts**: Blog/news posts with author attribution and publishing workflow
+- **Publishing workflow**: 5-state lifecycle (draft, review, ready, published, archived) with `published_at` scheduling
+- **Taxonomies**: Categories and tags for posts, many-to-many, translatable names
+- **SEO fields**: Meta title/description, featured image alt, focus keyword, secondary keywords, internal notes (internal-only)
+- **Markdown import**: `content:import-posts` command with consumer-defined field mapping, idempotent by slug
 - **Menus**: Hierarchical menu system with nested items
 - **Blocks**: Modular content blocks (HTML, Recent Posts, Menu, Contact Form)
 - **Layouts**: Pre-built page layouts (Single, Sidebar Left/Right, Two/Three Column)
@@ -131,21 +135,76 @@ $page->blocks()->create([
 
 ### Posts
 
-Blog posts with author attribution:
+Blog posts with author attribution and the publishing workflow:
 
 
 ```php
+use AichaDigital\LaraContent\Enums\PublishStatus;
 use AichaDigital\LaraContent\Models\Post;
 
 $post = Post::create([
     'title' => 'Getting Started',
     'slug' => 'getting-started',
-    'content' => '# Introduction...',
+    'content' => '<p>Introduction...</p>',
     'author_id' => auth()->id(),
-    'status' => 'published',
+    'publish_status' => PublishStatus::PUBLISHED,
     'published_at' => now(),
 ]);
+
+// Only PUBLISHED posts whose published_at is null or past are public.
+$visible = Post::published()->get();
 ```
+
+
+### Publishing workflow, taxonomies and SEO
+
+Posts and pages carry a 5-state editorial lifecycle via the `publish_status` column:
+`draft`, `review`, `ready`, `published`, `archived` (`PublishStatus` enum). The
+`published_at` timestamp schedules publication: a published post with a future
+date stays out of `Post::published()`.
+
+Taxonomies are many-to-many with translatable names:
+
+
+```php
+use AichaDigital\LaraContent\Models\Category;
+use AichaDigital\LaraContent\Models\Tag;
+
+$category = Category::create(['slug' => 'tips', 'name' => ['es' => 'Consejos', 'en' => 'Tips']]);
+$tag = Tag::create(['slug' => 'grammar', 'name' => ['en' => 'Grammar']]);
+
+$post->categories()->sync([$category->id]);
+$post->tags()->sync([$tag->id]);
+```
+
+SEO fields on posts: `meta_title`, `meta_description`, `featured_image_alt`
+(translatable), plus internal-only editorial fields (`focus_keyword`,
+`secondary_keywords`, `internal_notes`). Internal fields are declared in
+`Post::INTERNAL_ATTRIBUTES` and excluded from `Post::publicAttributes()`; they
+must never be rendered or exposed by public API surfaces.
+
+
+### Importing markdown posts
+
+
+```bash
+php artisan content:import-posts ./content/markdown --author=<uuid> [--dry-run]
+```
+
+The command reads `*.md` files with YAML frontmatter and upserts posts by slug
+(idempotent; files without a `slug` key are skipped). Markdown bodies are
+converted to sanitized HTML at import time (`content_type = html`).
+
+Frontmatter keys are consumer data, mapped through `config/content.php`:
+
+
+- `import.field_map`: frontmatter key → post attribute (or `categories`/`tags`)
+- `import.status_map`: consumer editorial state → `PublishStatus` value
+- `import.locale`: locale key for single-language frontmatter values
+- `import.max_meta_title` (60) / `import.max_meta_description` (155)
+
+The command exits non-zero when any file fails validation; `--dry-run`
+validates and reports without writing.
 
 
 ### Menus
@@ -266,6 +325,10 @@ Paquete de gestión de contenido para Laravel con páginas, posts, bloques y men
 
 - **Páginas**: Sistema flexible de páginas con layouts personalizables y zonas de bloques
 - **Posts**: Posts de blog/noticias con atribución de autor y flujo de publicación
+- **Flujo de publicación**: Ciclo de 5 estados (borrador, revisión, listo, publicado, archivado) con programación via `published_at`
+- **Taxonomías**: Categorías y etiquetas para posts, many-to-many, nombres traducibles
+- **Campos SEO**: Meta título/descripción, alt de imagen destacada, palabra clave principal, secundarias y notas internas (solo internas)
+- **Import de markdown**: Comando `content:import-posts` con mapping definido por el consumidor, idempotente por slug
 - **Menús**: Sistema jerárquico de menús con elementos anidados
 - **Bloques**: Bloques de contenido modulares (HTML, Posts Recientes, Menú, Formulario de Contacto)
 - **Layouts**: Layouts predefinidos (Una Columna, Sidebar Izquierda/Derecha, Dos/Tres Columnas)

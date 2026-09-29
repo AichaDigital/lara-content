@@ -116,12 +116,21 @@ abstract class MysqlIntegrationTestCase extends Orchestra
 
     private function runPackageMigrations(): void
     {
+        // Keep this list in migration order. New package migrations must be
+        // added here (this case does not use the migrator directory
+        // registration that the SQLite TestCase uses).
         $migrations = [
             '2025_01_01_000001_create_content_pages_table',
             '2025_01_01_000002_create_content_page_blocks_table',
             '2025_01_01_000003_create_content_posts_table',
             '2025_01_01_000004_create_content_menus_table',
             '2025_01_01_000005_create_content_menu_items_table',
+            '2026_09_29_000001_replace_is_published_with_publish_status',
+            '2026_09_29_000002_create_content_categories_table',
+            '2026_09_29_000003_create_content_tags_table',
+            '2026_09_29_000004_create_content_post_categories_table',
+            '2026_09_29_000005_create_content_post_tags_table',
+            '2026_09_29_000006_add_seo_and_internal_fields_to_content_posts',
         ];
 
         foreach ($migrations as $file) {

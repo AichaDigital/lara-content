@@ -93,7 +93,10 @@ abstract class AbstractBlock implements BlockContract
      */
     public function render(BlockContext $context): View|string
     {
-        return view($this->getViewName(), [
+        /** @var view-string $viewName */
+        $viewName = $this->getViewName();
+
+        return view($viewName, [
             'context' => $context,
             'config' => $context->config,
             'block' => $this,
