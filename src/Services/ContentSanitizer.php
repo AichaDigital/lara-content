@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace AichaDigital\LaraContent\Services;
 
 use AichaDigital\LaraContent\Enums\ContentType;
-use League\CommonMark\CommonMarkConverter;
 use League\CommonMark\Environment\Environment;
 use League\CommonMark\Extension\CommonMark\CommonMarkCoreExtension;
 use League\CommonMark\Extension\GithubFlavoredMarkdownExtension;
+use League\CommonMark\MarkdownConverter;
 use Stevebauman\Purify\Facades\Purify;
 
 /**
@@ -18,7 +18,7 @@ use Stevebauman\Purify\Facades\Purify;
  */
 class ContentSanitizer
 {
-    protected ?CommonMarkConverter $markdownConverter = null;
+    protected ?MarkdownConverter $markdownConverter = null;
 
     /**
      * Sanitize HTML content.
@@ -59,15 +59,19 @@ class ContentSanitizer
 
     /**
      * Get the Markdown converter instance.
+     *
+     * Uses MarkdownConverter (not CommonMarkConverter) because the latter
+     * builds its own environment and silently discards the one passed to it,
+     * which deactivated GFM (tables, strikethrough, task lists).
      */
-    protected function getMarkdownConverter(): CommonMarkConverter
+    protected function getMarkdownConverter(): MarkdownConverter
     {
         if ($this->markdownConverter === null) {
             $environment = new Environment($this->getMarkdownConfig());
             $environment->addExtension(new CommonMarkCoreExtension);
             $environment->addExtension(new GithubFlavoredMarkdownExtension);
 
-            $this->markdownConverter = new CommonMarkConverter([], $environment);
+            $this->markdownConverter = new MarkdownConverter($environment);
         }
 
         return $this->markdownConverter;

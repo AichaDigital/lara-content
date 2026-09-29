@@ -1,11 +1,13 @@
 <?php
 
 declare(strict_types=1);
+use AichaDigital\LaraContent\Models\Category;
 use AichaDigital\LaraContent\Models\Menu;
 use AichaDigital\LaraContent\Models\MenuItem;
 use AichaDigital\LaraContent\Models\Page;
 use AichaDigital\LaraContent\Models\PageBlock;
 use AichaDigital\LaraContent\Models\Post;
+use AichaDigital\LaraContent\Models\Tag;
 
 return [
     /*
@@ -83,6 +85,52 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Markdown Import
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the `content:import-posts` command. The field map is
+    | consumer data: it maps frontmatter YAML keys (any language) to post
+    | attributes. Keys not present in the map are ignored. The status map
+    | translates consumer editorial states to PublishStatus values.
+    |
+    */
+    'import' => [
+        // Locale key used when storing single-language frontmatter values
+        // into translatable attributes. Null falls back to app.locale.
+        'locale' => null,
+
+        // Frontmatter key => post attribute (or 'categories' / 'tags').
+        'field_map' => [
+            'slug' => 'slug',
+            'titulo' => 'title',
+            'extracto' => 'excerpt',
+            'meta_title' => 'meta_title',
+            'meta_description' => 'meta_description',
+            'imagen_destacada' => 'featured_image',
+            'imagen_destacada_alt' => 'featured_image_alt',
+            'palabra_clave_principal' => 'focus_keyword',
+            'palabras_clave_secundarias' => 'secondary_keywords',
+            'notas_internas' => 'internal_notes',
+            'categoria' => 'categories',
+            'etiquetas' => 'tags',
+            'estado' => 'publish_status',
+            'fecha_publicacion' => 'published_at',
+        ],
+
+        // Consumer editorial state => PublishStatus value.
+        'status_map' => [
+            'borrador' => 'draft',
+            'revisado' => 'ready',
+            'listo' => 'ready',
+        ],
+
+        // Frontmatter validation limits (SEO contract).
+        'max_meta_title' => 60,
+        'max_meta_description' => 155,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Model Classes
     |--------------------------------------------------------------------------
     |
@@ -93,6 +141,8 @@ return [
         'page' => Page::class,
         'page_block' => PageBlock::class,
         'post' => Post::class,
+        'category' => Category::class,
+        'tag' => Tag::class,
         'menu' => Menu::class,
         'menu_item' => MenuItem::class,
     ],

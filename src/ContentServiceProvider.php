@@ -8,6 +8,7 @@ use AichaDigital\LaraContent\Blocks\ContactFormBlock;
 use AichaDigital\LaraContent\Blocks\HtmlBlock;
 use AichaDigital\LaraContent\Blocks\MenuBlock;
 use AichaDigital\LaraContent\Blocks\RecentPostsBlock;
+use AichaDigital\LaraContent\Console\Commands\ImportPostsCommand;
 use AichaDigital\LaraContent\Layouts\SidebarLeftLayout;
 use AichaDigital\LaraContent\Layouts\SidebarRightLayout;
 use AichaDigital\LaraContent\Layouts\SingleLayout;
@@ -39,7 +40,14 @@ class ContentServiceProvider extends PackageServiceProvider
                 '2025_01_01_000003_create_content_posts_table',
                 '2025_01_01_000004_create_content_menus_table',
                 '2025_01_01_000005_create_content_menu_items_table',
-            ]);
+                '2026_09_29_000001_replace_is_published_with_publish_status',
+                '2026_09_29_000002_create_content_categories_table',
+                '2026_09_29_000003_create_content_tags_table',
+                '2026_09_29_000004_create_content_post_categories_table',
+                '2026_09_29_000005_create_content_post_tags_table',
+                '2026_09_29_000006_add_seo_and_internal_fields_to_content_posts',
+            ])
+            ->hasCommand(ImportPostsCommand::class);
     }
 
     public function packageRegistered(): void
